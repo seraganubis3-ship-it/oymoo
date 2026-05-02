@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  password  String
+  name      String
+  isBlocked Boolean  @default(false)
+  createdAt DateTime @default(now())
+  profile   Profile?
+}
+
+model Profile {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstSessionDate DateTime
+  preferredTime    String
+  beforePhotoUrl    String?
+  challengeFailedAt DateTime?
+  sessions          Session[]
+  createdAt         DateTime  @default(now())
+}
+
+model Session {
+  id            String    @id @default(cuid())
+  profileId     String
+  profile       Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  sessionNumber Int
+  scheduledAt   DateTime
+  completedAt   DateTime?
+  photoUrl      String?
+  notes         String?
+  createdAt     DateTime  @default(now())
+}
+
+model Admin {
+  id        String     @id @default(cuid())
+  phone     String     @unique
+  password  String
+  name      String
+  role      String     @default("admin")
+  createdAt DateTime   @default(now())
+  auditLogs AuditLog[]
+}
+
+model AppSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  label     String
+  type      String   @default("text")
+  section   String
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  adminId      String
+  admin        Admin    @relation(fields: [adminId], references: [id])
+  action       String
+  targetUserId String?
+  details      String?  @db.Text
+  createdAt    DateTime @default(now())
+}
