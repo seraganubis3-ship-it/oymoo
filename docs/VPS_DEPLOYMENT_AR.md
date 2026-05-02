@@ -25,12 +25,12 @@ sudo apt update && sudo apt upgrade -y
 ---
 
 ## الخطوة 2: تثبيت البرامج الأساسية
-سنقوم بتثبيت Node.js (الإصدار 20)، Nginx (خادم الويب)، و Git.
+سنقوم بتثبيت Node.js (الإصدار 20)، Nginx (خادم الويب)، Git، و Docker لتشغيل قاعدة البيانات.
 
 ```bash
 # تثبيت Node.js (إصدار 20)
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs git nginx
+sudo apt install -y nodejs git nginx docker.io docker-compose-v2
 
 # تثبيت PM2 لإبقاء التطبيق يعمل في الخلفية حتى لو أغلقت الشاشة
 sudo npm install -g pm2
@@ -50,7 +50,18 @@ cd oymo
 
 ---
 
-## الخطوة 4: إعداد المتغيرات البيئية (.env)
+## الخطوة 4: تشغيل قاعدة البيانات باستخدام Docker
+بدلاً من تثبيت قاعدة البيانات يدوياً، سنستخدم Docker لتشغيل PostgreSQL بضغطة زر. لقد أضفنا ملف `docker-compose.yml` بالفعل للمشروع.
+
+قم بتشغيل قاعدة البيانات في الخلفية:
+```bash
+sudo docker compose up -d
+```
+*(هذا الأمر سيقوم بتحميل نسخة PostgreSQL وتشغيلها وإنشاء قاعدة بيانات باسم oymo، والبيانات لن تُحذف حتى لو تم إيقاف الحاوية).*
+
+---
+
+## الخطوة 5: إعداد المتغيرات البيئية (.env)
 انسخ ملف الإعدادات وقم بتعديله ليناسب بيئة الإنتاج (Production):
 
 ```bash
@@ -59,8 +70,8 @@ nano .env
 ```
 ستفتح لك شاشة التعديل (Nano). تأكد من إضافة وتعديل المتغيرات التالية:
 ```ini
-# قاعدة البيانات (استخدم رابط Neon.tech الخاص بك)
-DATABASE_URL="postgres://user:pass@ep-....neon.tech/neondb?sslmode=require"
+# قاعدة البيانات (تعمل محلياً عبر Docker)
+DATABASE_URL="postgresql://oymouser:oymo_secure_password@localhost:5432/oymo?schema=public"
 
 # كلمات سر التشفير (اكتب حروف وأرقام عشوائية طويلة)
 JWT_USER_SECRET="your-very-long-user-secret-key-here"
@@ -82,7 +93,7 @@ NEXT_PUBLIC_APP_URL="https://oymo.com"
 
 ---
 
-## الخطوة 5: تثبيت الحزم وقاعدة البيانات
+## الخطوة 6: تثبيت الحزم وقاعدة البيانات
 ```bash
 # تثبيت حزم النود
 npm install
@@ -90,7 +101,7 @@ npm install
 # توليد Prisma Client
 npx prisma generate
 
-# رفع هيكل قاعدة البيانات لـ Neon
+# رفع هيكل قاعدة البيانات المحلية
 npx prisma db push
 
 # (اختياري) إضافة الإعدادات الأساسية لقاعدة البيانات لأول مرة فقط
@@ -99,7 +110,7 @@ npx prisma db seed
 
 ---
 
-## الخطوة 6: بناء المشروع (Build)
+## الخطوة 7: بناء المشروع (Build)
 قم بعمل Build لنسخة الإنتاج من Next.js:
 ```bash
 npm run build
@@ -107,7 +118,7 @@ npm run build
 
 ---
 
-## الخطوة 7: تشغيل المشروع باستخدام PM2
+## الخطوة 8: تشغيل المشروع باستخدام PM2
 لكي يعمل المشروع كخدمة في الخلفية:
 ```bash
 # تشغيل المشروع
@@ -121,7 +132,7 @@ pm2 startup
 
 ---
 
-## الخطوة 8: إعداد Nginx كـ Reverse Proxy
+## الخطوة 9: إعداد Nginx كـ Reverse Proxy
 الآن المشروع يعمل على البورت `3000`. سنستخدم Nginx لاستقبال الزوار من البورت `80` وتحويلهم للمشروع:
 
 افتح إعدادات Nginx:
@@ -153,7 +164,7 @@ sudo systemctl restart nginx
 
 ---
 
-## الخطوة 9: تأمين الموقع بشهادة SSL مجانية (HTTPS)
+## الخطوة 10: تأمين الموقع بشهادة SSL مجانية (HTTPS)
 لجعل الموقع آمن برابط `https://`:
 ```bash
 # تثبيت حزمة Certbot

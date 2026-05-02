@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: oymo-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: oymouser
+      POSTGRES_PASSWORD: Serag1123#
+      POSTGRES_DB: oymo
+    ports:
+      - "5432:5432"
+    volumes:
+      - oymo_pgdata:/var/lib/postgresql/data
+
+volumes:
+  oymo_pgdata:
