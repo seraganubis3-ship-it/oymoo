@@ -51,7 +51,7 @@ export default function LoginClient({ settings }: LoginPageProps) {
         return
       }
       toast.success('تم تسجيل الدخول بنجاح')
-      router.push(json.redirectTo)
+      window.location.href = json.redirectTo
     } catch {
       setServerError('حدث خطأ في الاتصال، حاولي مجدداً')
     } finally {

@@ -25,7 +25,7 @@ export default function AdminLoginPage() {
       const json = await res.json()
       if (!res.ok) { setError(json.error || 'بيانات غير صحيحة'); return }
       toast.success('مرحباً بك في لوحة التحكم')
-      router.push('/admin/dashboard')
+      window.location.href = '/admin/dashboard'
     } catch { setError('حدث خطأ في الاتصال') } finally { setLoading(false) }
   }
 
