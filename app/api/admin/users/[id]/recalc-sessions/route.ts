@@ -16,13 +16,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   })
   if (!profile) return NextResponse.json({ error: 'الملف غير موجود' }, { status: 404 })
 
-  const intervalWeeks = await getSettingNumber('session_interval_weeks')
   const newStart = new Date(firstSessionDate)
   const [h, m] = profile.preferredTime.split(':').map(Number)
 
   // Only update incomplete sessions' dates
   for (const session of profile.sessions) {
-    const base = addWeeks(startOfDay(newStart), (session.sessionNumber - 1) * intervalWeeks)
+    const i = session.sessionNumber - 1
+    const weeksToAdd = i < 4 ? i : 3 + (i - 3) * 2
+    
+    const base = addWeeks(startOfDay(newStart), weeksToAdd)
     const scheduledAt = setMinutes(setHours(base, h), m)
     await prisma.session.update({ where: { id: session.id }, data: { scheduledAt } })
   }

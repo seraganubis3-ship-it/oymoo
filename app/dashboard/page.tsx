@@ -28,7 +28,7 @@ export default async function DashboardPage() {
   if (!user.profile) redirect('/setup')
 
   const s = await getSettings()
-  const totalSessions = await getSettingNumber('total_sessions')
+  const totalSessions = 10
   const deleteDays = await getSettingNumber('challenge_failed_delete_days')
   const sessions = user.profile.sessions
   const profile = user.profile

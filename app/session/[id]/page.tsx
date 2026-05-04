@@ -23,7 +23,7 @@ export default async function SessionDetailPage({
   })
   if (!session) notFound()
 
-  const totalSessions = await getSettingNumber('total_sessions')
+  const totalSessions = 10
   const s = await getSettings()
   const nextSession = await getNextSession(session.profileId)
   const isCurrentSession = nextSession?.id === session.id

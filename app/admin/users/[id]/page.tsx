@@ -15,7 +15,7 @@ export default async function AdminUserDetailPage({ params }: { params: { id: st
   })
   if (!user) notFound()
 
-  const totalSessions = await getSettingNumber('total_sessions')
+  const totalSessions = 10
 
   return (
     <AdminUserDetailClient

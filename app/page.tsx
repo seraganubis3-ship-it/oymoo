@@ -4,7 +4,7 @@ import { getSettings, getSettingBool, getSettingNumber } from '@/lib/settings'
 export default async function LandingPage() {
   const s = await getSettings()
   const maintenanceMode = await getSettingBool('maintenance_mode')
-  const totalSessions = await getSettingNumber('total_sessions')
+  const totalSessions = 10
 
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-center bg-background overflow-hidden px-4">
