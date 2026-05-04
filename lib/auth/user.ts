@@ -52,7 +52,7 @@ export async function getUserFromCookie(): Promise<{ userId: string } | null> {
 export const USER_COOKIE_OPTIONS = {
   name: 'oymo_user_token',
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
+  secure: process.env.NODE_ENV === 'production' && process.env.USE_SECURE_COOKIES === 'true',
   sameSite: 'lax' as const,
   maxAge: 30 * 24 * 60 * 60, // 30 days
   path: '/',

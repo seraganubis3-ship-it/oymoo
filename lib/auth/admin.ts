@@ -47,7 +47,7 @@ export async function getAdminFromCookie(): Promise<{
 export const ADMIN_COOKIE_OPTIONS = {
   name: 'oymo_admin_token',
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
+  secure: process.env.NODE_ENV === 'production' && process.env.USE_SECURE_COOKIES === 'true',
   sameSite: 'lax' as const,
   maxAge: 30 * 24 * 60 * 60,
   path: '/',
